@@ -1,5 +1,4 @@
 locals {
-    subdomains    = ["*.pks"]
 }
 
 variable "email" {
@@ -34,8 +33,7 @@ resource "null_resource" "dns-propagation-wait" {
 
 resource "acme_certificate" "pks-certificate" {
   account_key_pem           = "${acme_registration.reg.account_key_pem}"
-  common_name               = "${var.env_name}.${var.dns_suffix}"
-  subject_alternative_names = "${formatlist("%s.${var.env_name}.${var.dns_suffix}", local.subdomains)}"
+  common_name               = "${module.pks.domain}"
   depends_on                = ["aws_route53_record.nameserver","null_resource.dns-propagation-wait"]
   recursive_nameservers = ["8.8.8.8:53"]
   

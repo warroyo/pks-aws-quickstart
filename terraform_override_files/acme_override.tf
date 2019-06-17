@@ -1,5 +1,5 @@
 locals {
-    subdomains    = ["*.pks","*"]
+    subdomains    = ["*.pks"]
 }
 
 variable "email" {

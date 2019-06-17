@@ -8,7 +8,7 @@ variable "email" {
 
 provider "acme" {
   server_url = "https://acme-v02.api.letsencrypt.org/directory"
-  version = "~> 1.1.2"
+  version = "~> 1.3.4"
 }
 
 resource "tls_private_key" "pks_private_key" {
@@ -37,7 +37,7 @@ resource "acme_certificate" "pks-certificate" {
   common_name               = "${var.env_name}.${var.dns_suffix}"
   subject_alternative_names = "${formatlist("%s.${var.env_name}.${var.dns_suffix}", local.subdomains)}"
   depends_on                = ["aws_route53_record.nameserver","null_resource.dns-propagation-wait"]
-  # recursive_nameservers = ["8.8.8.8:53","8.8.4.4:53"]
+  recursive_nameservers = ["8.8.8.8:53"]
   
 
   dns_challenge {
@@ -84,7 +84,7 @@ resource "acme_certificate" "opsman-certificate" {
   account_key_pem           = "${acme_registration.reg.account_key_pem}"
   common_name               = "${module.ops_manager.dns}"
   depends_on                = ["aws_route53_record.nameserver","null_resource.dns-propagation-wait"]
-  # recursive_nameservers = ["8.8.8.8:53","8.8.4.4:53"]
+  recursive_nameservers = ["8.8.8.8:53"]
 
   dns_challenge {
     provider                  = "route53"

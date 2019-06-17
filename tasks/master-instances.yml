@@ -1,0 +1,60 @@
+---
+platform: linux
+
+inputs:
+- name: env # contains the env file with target OpsMan Information
+- name: terraform-output
+- name: pks
+
+outputs:
+- name: tf-modified
+
+params:
+  ENV_FILE: env.yml
+  CLUSTER_NAME:
+  GCP_ACCOUNT:
+  TF_FILE:
+  
+
+
+run:
+  path: bash
+  args:
+  - "-c"
+  - |
+    set -eu
+    cat /var/version && echo ""
+
+    curl -L -s -o jq https://github.com/stedolan/jq/releases/download/jq-1.6/jq-linux64
+    chmod +x jq
+    mv pks/pks-linux-* pks-cli
+    chmod +x pks-cli
+    echo "getting pks creds"
+    export PKS_PASSWORD="$(om --env env/${ENV_FILE} credentials --product-name pivotal-container-service --credential-reference .properties.uaa_admin_password -f secret)" 
+    export PKS_API="$(./jq -r .pks_api_endpoint terraform-output/metadata)"
+
+    ./pks-cli login -a $PKS_API -u admin -p $PKS_PASSWORD -k
+   
+
+    CLUSTER_UUID=$(./pks-cli cluster ${CLUSTER_NAME} --json | ./jq -c -r ".uuid")
+
+    OM_HOST="$(./jq -r .ops_manager_dns terraform-output/metadata)"
+
+    BOSH_CMD=$(om --env env/${ENV_FILE} curl --silent --path /api/v0/deployed/director/credentials/bosh_commandline_credentials | ./jq -c -r ".credential")
+    
+    #due to p-automator not allowing foir setting a public key on gcp we need to gcloud ssh.
+    echo ${GCP_ACCOUNT} > gcp_account.key.json
+    export CLOUDSDK_CORE_PROJECT="$(./jq -r .project terraform-output/metadata)"
+    gcloud auth activate-service-account --key-file ./gcp_account.key.json
+    GCP_ZONE=$(./jq -r .azs[0] terraform-output/metadata)
+    echo "getting master instances"
+    #need to initilaize gcloud ssh to get clean output on second run
+    gcloud compute ssh --quiet --force-key-file-overwrite --zone "${GCP_ZONE}" ubuntu@sandbox-opsman --command "echo hello"
+    MASTER_INSTANCE_ID=$(gcloud compute ssh --quiet --force-key-file-overwrite --zone "${GCP_ZONE}" ubuntu@sandbox-opsman --command "$BOSH_CMD -d service-instance_${CLUSTER_UUID} vms --json | jq -r -c '.Tables[0].Rows[] | select(.instance | startswith(\"master\")) | \"\(.az)/\(.vm_cid)\"'")
+    # ./jq -r .ops_manager_ssh_private_key terraform-output/metadata > ops_manager_ssh_private_key.pem
+    # chmod 600 ops_manager_ssh_private_key.pem
+    # MASTER_INSTANCE_ID=$(ssh -oStrictHostKeyChecking=accept-new -oUserKnownHostsFile=/dev/null ubuntu@${OM_HOST} -i ops_manager_ssh_private_key.pem $BOSH_CMD -d service-instance_${CLUSTER_UUID} vms --json | ./jq -r -c '.Tables[0].Rows[] | select(.instance | startswith("master")) | .vm_cid')
+    
+    echo "MASTER_INSTANCE_ID=$MASTER_INSTANCE_ID"
+    cp -a env/* tf-modified
+    printf '\n%s' "instances = \"$MASTER_INSTANCE_ID\"" >> tf-modified/$TF_FILE

@@ -1,0 +1,4 @@
+---
+username: {{env.Getenv "OM_USERNAME" }}
+password: {{env.Getenv "OM_PASSWORD" }}
+decryption-passphrase:  {{env.Getenv "OM_DECRYPTION_PASSPHRASE" }}

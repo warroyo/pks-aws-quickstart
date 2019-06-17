@@ -1,0 +1,13 @@
+---
+opsman-configuration:
+  aws:
+    region: {{ (ds "data").region }}
+    vm_name: {{ $env_name }}-opsman
+    vpc_subnet_id: {{ index (ds "data").infrastructure_subnet_ids 0 }}
+    iam_instance_profile_name: {{ (ds "data").ops_manager_iam_instance_profile_name }}
+    use_instance_profile: true 
+    key_pair_name: ops_manager
+    instance_type: m5.large
+    boot_disk_size: 100
+    # At least one IP address (public or private) needs to be assigned to the VM.
+    public_ip: {{ (ds "data").ops_manager_public_ip }}

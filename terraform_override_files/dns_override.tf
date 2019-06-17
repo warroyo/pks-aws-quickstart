@@ -9,5 +9,5 @@ resource "aws_route53_record" "nameserver" {
 
   zone_id = "${var.parent_managed_zone}"
 
-  rrdatas = ["${module.infra.dns_zone_name_servers}"]
+  rrdatas = ["${module.infra.name_servers}"]
 }

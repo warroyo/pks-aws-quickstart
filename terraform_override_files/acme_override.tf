@@ -25,8 +25,8 @@ resource "null_resource" "dns-propagation-wait" {
     command = "sleep 30"
   }
   triggers {
-      api_endpoint  = "${module.pks.api_endpoint}"
-      ops_manager_domain  = "${module.ops_manager.ops_manager_dns}"
+      api_endpoint  = "${module.pks.domain}"
+      ops_manager_domain  = "${module.ops_manager.dns}"
     }
 } 
 
@@ -82,17 +82,16 @@ resource "aws_acm_certificate" "certificate" {
 
 resource "acme_certificate" "opsman-certificate" {
   account_key_pem           = "${acme_registration.reg.account_key_pem}"
-  common_name               = "${module.ops_manager.ops_manager_dns}"
+  common_name               = "${module.ops_manager.dns}"
   depends_on                = ["aws_route53_record.nameserver","null_resource.dns-propagation-wait"]
   # recursive_nameservers = ["8.8.8.8:53","8.8.4.4:53"]
 
   dns_challenge {
-    provider                  = "gcloud"
-    config {
-      GCE_DEBUG                 = "true"
-      GCE_PROJECT               = "${var.project}"
-      GCE_SERVICE_ACCOUNT       = "${var.service_account_key}"
-      GCE_PROPAGATION_TIMEOUT   = "600"
+    provider                  = "route53"
+     config {
+      AWS_ACCESS_KEY_ID     = "${var.access_key}"
+      AWS_SECRET_ACCESS_KEY = "${var.secret_key}"
+      AWS_DEFAULT_REGION    = "${var.region}"
     }
   }
 }

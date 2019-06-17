@@ -77,6 +77,7 @@ resources:
       bucket: ((aws.buckets.terraform))
       workspace_key_prefix: ((pks.env_name))
       region: ((aws.region))
+      key: ((pks.env_name))/terraform.tfstate
       access_key: ((aws.access_key))
       secret_key: ((aws.secret_key))
     vars:
@@ -163,13 +164,12 @@ interpolate: &interpolate
     file: pcf-automation-source/tasks/interpolate.yml
     input_mapping:
       config: configuration
-      terraform-output: env-state-gcp
+      terraform-output: env-state-aws
     output_mapping:
       interpolated-config: configuration-interpolated
     params:
       ENV_NAME: ((pks.env_name))
       PIVNET_API_TOKEN: ((pivnet-api-token))
-      GCP_AUTH_JSON: ((gcp.gcp_service_account))
       OM_USERNAME: ((opsman.username))
       OM_PASSWORD: ((opsman.password))
       OM_DECRYPTION_PASSPHRASE: ((opsman.decryption-passphrase))
@@ -260,7 +260,7 @@ jobs:
       merge: true
 
 
-- name: terraforming-gcp
+- name: terraforming-aws
   serial: true
   public: false
   plan:
@@ -269,13 +269,13 @@ jobs:
   - get: tf
     params:
       globs:
-      - "terraforming-gcp-*.zip"
+      - "terraforming-aws-*.zip"
       unpack: true
   - get: pcf-automation-source
     passed: [bootstrap-configuration]
   - task: rename-folder
     <<: *rename-tf-source
-  - put: env-state-gcp
+  - put: env-state-aws
     params:
       # env:
       #   TF_LOG: DEBUG
@@ -302,12 +302,12 @@ jobs:
     - get: opsman
       params:
         globs: 
-        - '*gcp*.yml'
+        - '*aws*.yml'
     - get: configuration
-      passed: [terraforming-gcp]
+      passed: [terraforming-aws]
     - get: state
     - get: pcf-automation-source
-    - get: env-state-gcp
+    - get: env-state-aws
   - <<: *interpolate
   - task: create-vm
     image: platform-automation-image
@@ -393,7 +393,7 @@ jobs:
     image: platform-automation-image
     file: pcf-automation-source/tasks/update-ssl-certificate.yml
     input_mapping:
-      terraform-output: env-state-gcp
+      terraform-output: env-state-aws
       env: configuration-interpolated
     params:
       ENV_FILE: ((pks.env_name))/env/env.yml
@@ -417,7 +417,7 @@ jobs:
       trigger: true
       passed: [ install-opsman ]
     - get: pcf-automation-source
-    - get: env-state-gcp
+    - get: env-state-aws
   - <<: *interpolate
   - task: upload-pks-stemcell
     image: platform-automation-image
@@ -445,7 +445,7 @@ jobs:
       trigger: true
       passed: [ upload-stemcell ]
     - get: pcf-automation-source
-    - get: env-state-gcp
+    - get: env-state-aws
   - <<: *interpolate
   - task: upload-product
     image: platform-automation-image
@@ -479,7 +479,7 @@ jobs:
       trigger: true
       passed: [ upload-and-stage-pks ]
     - get: pcf-automation-source
-    - get: env-state-gcp
+    - get: env-state-aws
   - <<: *interpolate
   - task: configure-pks
     image: platform-automation-image
@@ -506,7 +506,7 @@ jobs:
       trigger: true
       passed: [ configure-pks ]
     - get: pcf-automation-source
-    - get: env-state-gcp
+    - get: env-state-aws
   - <<: *interpolate
   - task: apply-product-changes
     image: platform-automation-image
@@ -531,7 +531,7 @@ jobs:
       params: {unpack: true,globs: [platform-automation-tasks-*.zip]}
     - get: configuration
     - get: state
-    - get: env-state-gcp
+    - get: env-state-aws
   - <<: *interpolate
   - task: delete-installation
     image: platform-automation-image
@@ -563,13 +563,13 @@ jobs:
     - get: tf
       params:
         globs:
-        - "terraforming-gcp-*.zip"
+        - "terraforming-aws-*.zip"
         unpack: true
   - get: pcf-automation-source
   - get: state
   - task: rename-folder
     <<: *rename-tf-source
-  - put: env-state-gcp
+  - put: env-state-aws
     params:
       env_name: ((pks.env_name))
       terraform_source: tf-source/terraforming-pks
@@ -638,7 +638,7 @@ jobs:
       params: {unpack: true, globs: [platform-automation-image-*.tgz]}
     - get: configuration
     - get: pcf-automation-source
-    - get: env-state-gcp
+    - get: env-state-aws
     - get: pks
       params:
         globs:
@@ -648,13 +648,13 @@ jobs:
     image: platform-automation-image
     file: pcf-automation-source/tasks/create-cluster.yml
     input_mapping:
-      terraform-output: env-state-gcp
+      terraform-output: env-state-aws
       env: configuration-interpolated
       pks: pks
     params:
       ENV_FILE: ((pks.env_name))/env/env.yml
       CLUSTER_NAME: ((pks.cluster_name))
-      CLUSTER_HOSTNAME: ((pks.cluster_name)).((pks.env_name)).((gcp.parent_zone.dns_suffix))
+      CLUSTER_HOSTNAME: ((pks.cluster_name)).((pks.env_name)).((aws.parent_zone.dns_suffix))
 
 - name: terraforming-k8s
   serial: true
@@ -665,7 +665,7 @@ jobs:
   - get: configuration
     trigger: true
     passed: ['create-cluster']
-  - get: env-state-gcp
+  - get: env-state-aws
   - get: pcf-automation-source
   - get: pks
     params:
@@ -676,7 +676,7 @@ jobs:
     image: platform-automation-image
     file: pcf-automation-source/tasks/master-instances.yml
     input_mapping:
-      terraform-output: env-state-gcp
+      terraform-output: env-state-aws
       env: configuration-interpolated
       pks: pks
     output_mapping:
@@ -685,8 +685,7 @@ jobs:
       ENV_FILE: ((pks.env_name))/env/env.yml
       TF_FILE: ((pks.env_name))/tf/terraform.tfvars
       CLUSTER_NAME: ((pks.cluster_name))
-      GCP_ACCOUNT: ((gcp.gcp_service_account))
-  - put: cluster-state-gcp
+  - put: cluster-state-aws
     params:
       env_name: ((pks.env_name))
       terraform_source: pcf-automation-source/terraforming-k8s
@@ -703,13 +702,13 @@ jobs:
     trigger: true
     passed:
     - destroy-installation
-  - get: env-state-gcp
+  - get: env-state-aws
   - get: pcf-automation-source
     params:
       globs:
       - pks-linux*
   - <<: *interpolate
-  - put: cluster-state-gcp
+  - put: cluster-state-aws
     params:
       env_name: ((pks.env_name))
       terraform_source: pcf-automation-source/terraforming-k8s
@@ -723,7 +722,7 @@ jobs:
 groups:
 - name: deploy
   jobs:
-  - terraforming-gcp
+  - terraforming-aws
   - bootstrap-configuration
   - install-opsman
   - upload-stemcell

@@ -35,7 +35,6 @@ resource "acme_certificate" "pks-certificate" {
   account_key_pem           = "${acme_registration.reg.account_key_pem}"
   common_name               = "${module.pks.domain}"
   depends_on                = ["aws_route53_record.nameserver","null_resource.dns-propagation-wait"]
-  recursive_nameservers = ["8.8.8.8:53"]
   
 
   dns_challenge {
@@ -83,7 +82,6 @@ resource "acme_certificate" "opsman-certificate" {
   account_key_pem           = "${acme_registration.reg.account_key_pem}"
   common_name               = "${module.ops_manager.dns}"
   depends_on                = ["aws_route53_record.nameserver","null_resource.dns-propagation-wait"]
-  recursive_nameservers = ["8.8.8.8:53"]
 
   dns_challenge {
     provider                  = "route53"

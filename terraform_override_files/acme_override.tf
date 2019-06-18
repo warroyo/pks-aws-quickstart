@@ -34,7 +34,7 @@ resource "null_resource" "dns-propagation-wait" {
 resource "acme_certificate" "pks-certificate" {
   account_key_pem           = "${acme_registration.reg.account_key_pem}"
   common_name               = "${module.pks.domain}"
-  depends_on                = ["aws_route53_record.nameserver","null_resource.dns-propagation-wait"]
+  # depends_on                = ["aws_route53_record.nameserver","null_resource.dns-propagation-wait"]
   
 
   dns_challenge {
@@ -80,7 +80,7 @@ resource "aws_acm_certificate" "certificate" {
 resource "acme_certificate" "opsman-certificate" {
   account_key_pem           = "${acme_registration.reg.account_key_pem}"
   common_name               = "${module.ops_manager.dns}"
-  depends_on                = ["aws_route53_record.nameserver","null_resource.dns-propagation-wait"]
+  # depends_on                = ["aws_route53_record.nameserver","null_resource.dns-propagation-wait"]
 
   dns_challenge {
     provider                  = "route53"

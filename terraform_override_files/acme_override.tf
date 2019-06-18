@@ -43,6 +43,7 @@ resource "acme_certificate" "pks-certificate" {
       AWS_ACCESS_KEY_ID     = "${var.access_key}"
       AWS_SECRET_ACCESS_KEY = "${var.secret_key}"
       AWS_HOSTED_ZONE_ID    = "${module.infra.zone_id}"
+      AWS_PROPAGATION_TIMEOUT = "300"
     }
   }
 }
@@ -88,6 +89,7 @@ resource "acme_certificate" "opsman-certificate" {
       AWS_ACCESS_KEY_ID     = "${var.access_key}"
       AWS_SECRET_ACCESS_KEY = "${var.secret_key}"
       AWS_HOSTED_ZONE_ID    = "${module.infra.zone_id}"
+      AWS_PROPAGATION_TIMEOUT = "300"
     }
   }
 }

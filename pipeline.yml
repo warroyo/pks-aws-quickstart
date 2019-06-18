@@ -277,8 +277,8 @@ jobs:
     <<: *rename-tf-source
   - put: env-state-aws
     params:
-      env:
-        TF_LOG: TRACE
+      # env:
+      #   TF_LOG: debug
       env_name: ((pks.env_name))
       terraform_source: tf-source/terraforming-pks
       override_files:

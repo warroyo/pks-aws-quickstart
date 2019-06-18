@@ -42,7 +42,6 @@ resource "acme_certificate" "pks-certificate" {
     config {
       AWS_ACCESS_KEY_ID     = "${var.access_key}"
       AWS_SECRET_ACCESS_KEY = "${var.secret_key}"
-      AWS_DEFAULT_REGION    = "${var.region}"
       AWS_HOSTED_ZONE_ID    = "${module.infra.zone_id}"
     }
   }
@@ -88,7 +87,6 @@ resource "acme_certificate" "opsman-certificate" {
      config {
       AWS_ACCESS_KEY_ID     = "${var.access_key}"
       AWS_SECRET_ACCESS_KEY = "${var.secret_key}"
-      AWS_DEFAULT_REGION    = "${var.region}"
       AWS_HOSTED_ZONE_ID    = "${module.infra.zone_id}"
     }
   }

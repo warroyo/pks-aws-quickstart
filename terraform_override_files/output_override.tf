@@ -23,6 +23,6 @@ output "subnet_pks_svc_reserved" {
 }
 
 output "dns" {
-  value = "${cidrhost(vars.vpc_cidr, 2)}"
+  value = "${cidrhost(var.vpc_cidr, 2)}"
 }
 

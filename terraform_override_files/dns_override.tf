@@ -11,3 +11,14 @@ resource "aws_route53_record" "nameserver" {
 
   records = ["${module.infra.name_servers}"]
 }
+
+resource "aws_route53_record" "name_servers" {
+
+  zone_id = "${module.infra.zone_id}"
+  name    = "${var.env_name}.${var.dns_suffix}"
+
+  type = "NS"
+  ttl  = 300
+
+  records = ["${module.infra.name_servers}"]
+}

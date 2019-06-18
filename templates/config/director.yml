@@ -4,14 +4,14 @@ az-configuration:
 - name: {{ index (ds "data").azs 2 }}
 network-assignment:
   network:
-    name: {{ (ds "data").management_subnet_name }}
+    name: pks-infra
   other_availability_zones: []
   singleton_availability_zone:
     name: {{ index (ds "data").azs 0 }}
 networks-configuration:
   icmp_checks_enabled: false
   networks:
-  - name: {{ (ds "data").management_subnet_name }}
+  - name: pks-infra
     subnets:
     {{ range $index, $element := (ds "data").infrastructure_subnets }}
     - iaas_identifier: {{ index (ds "data").infrastructure_subnet_ids $index }}
@@ -22,7 +22,7 @@ networks-configuration:
       availability_zone_names:
       - {{ index (ds "data").infrastructure_subnet_availability_zones $index }}
     {{ end }}
-  - name: {{ (ds "data").pks_subnet_name }}
+  - name: pks
     subnets:
     {{ range $index, $element := (ds "data").pks_subnets }}
     - iaas_identifier: {{ index (ds "data").pks_subnet_ids $index }}
@@ -33,7 +33,7 @@ networks-configuration:
       availability_zone_names:
       - {{ index (ds "data").pks_subnet_availability_zones $index }}
     {{ end }}
-  - name: {{ (ds "data").services_subnet_name }}
+  - name: pks-services
     subnets:
     {{ range $index, $element := (ds "data").services_subnets }}
     - iaas_identifier: {{ index (ds "data").services_subnet_ids $index }}

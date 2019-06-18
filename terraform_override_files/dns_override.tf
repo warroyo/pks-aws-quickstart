@@ -3,7 +3,7 @@ variable "parent_managed_zone" {
 }
 
 resource "aws_route53_record" "nameserver" {
-  name = "${var.env_name}.${var.dns_suffix}."
+  name = "${var.env_name}.${var.dns_suffix}"
   type = "NS"
   ttl  = 300
 

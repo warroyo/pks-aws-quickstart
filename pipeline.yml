@@ -89,6 +89,7 @@ resources:
       tags:
       - Env: ((pks.env_name))
       ops_manager_ami: ""
+      vpc_cidr: ((aws.vpc_cidr))
       parent_managed_zone: ((aws.parent_zone.name))
       email: ((email))
 

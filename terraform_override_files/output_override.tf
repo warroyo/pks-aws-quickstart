@@ -21,3 +21,8 @@ output "subnet_pks_svc_reserved" {
     "${cidrhost(module.pks.services_subnet_cidrs[2], 1)}-${cidrhost(module.pks.services_subnet_cidrs[2], 9)}"
   ]
 }
+
+output "dns" {
+  value = "${cidrhost(vars.vpc_cidr, 2)}"
+}
+

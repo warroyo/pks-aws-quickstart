@@ -12,6 +12,7 @@ resource "aws_route53_record" "nameserver" {
   records = ["${module.infra.name_servers}"]
 }
 
+#overriding the infra/dns module since in 0.37 it is broken and adds the NS record as a list.
 resource "aws_route53_record" "name_servers" {
 
   zone_id = "${module.infra.zone_id}"

@@ -26,3 +26,6 @@ output "dns" {
   value = "${cidrhost(var.vpc_cidr, 2)}"
 }
 
+output "env_name" {
+  value = "${var.env_name}"
+}

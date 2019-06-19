@@ -13,5 +13,4 @@ variable "dns_zone_name" {}
 variable "dns_zone_dns_name" {}
 
 variable "public_subnet_ids" {
-  
 }

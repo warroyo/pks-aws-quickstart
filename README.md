@@ -1,7 +1,7 @@
 # pks-aws-quickstart
 
-This repo contains a concourse pipeline and tasks to automatically deploy PKS on GCP, including paving the environment using Terraform. This is meant for POCs and getting a minimal platform up quickly in a self contained way. this should not be used for production.
-It is using [terraforming-gcp](https://github.com/pivotal-cf/terraforming-gcp) and [Platform Automation](http://docs.pivotal.io/platform-automation/v2.2/) to do so.
+This repo contains a concourse pipeline and tasks to automatically deploy PKS on AWS, including paving the environment using Terraform. This is meant for POCs and getting a minimal platform up quickly in a self contained way. this should not be used for production.
+It is using [terraforming-AWS](https://github.com/pivotal-cf/terraforming-aws) and [Platform Automation](http://docs.pivotal.io/platform-automation/v3.0/) to do so.
 
 # Features
 
@@ -12,12 +12,12 @@ It is using [terraforming-gcp](https://github.com/pivotal-cf/terraforming-gcp) a
 
 # Reqirements
 
-* GCP account
+* AWS account
 * Pivotal Network account
 * Git Repository
-* 1 private GCS Bucket
+* 1 private S3 Bucket
 * concourse(local if neccessary)
-* a (sub-)domain hosted on GCP
+* a (sub-)domain hosted on AWS
 
 # Credentials
 
@@ -29,6 +29,6 @@ Copy the `credentials-template.yml` file to `credentials.yml` and modify the app
 ```
 docker-compose up
 fly login -t local -c  http://localhost:8080
-fly -t local set-pipeline -p pks-gcp-quickstart -c pipeline.yml -l credentials.yml --verbose
-fly -t local unpause-pipeline -p pks-gcp-quickstart
+fly -t local set-pipeline -p pks-aws-quickstart -c pipeline.yml -l credentials.yml --verbose
+fly -t local unpause-pipeline -p pks-aws-quickstart
 ```

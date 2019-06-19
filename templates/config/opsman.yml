@@ -4,6 +4,7 @@ opsman-configuration:
     region: {{ (ds "data").region }}
     vm_name: {{ (ds "data").env_name }}-opsman
     vpc_subnet_id: {{ index (ds "data").infrastructure_subnet_ids 0 }}
+    iam_instance_profile_name: {{ (ds "data").ops_manager_iam_instance_profile_name }}
     key_pair_name: {{ (ds "data").ops_manager_ssh_public_key_name }}
     instance_type: m5.large
     boot_disk_size: 100

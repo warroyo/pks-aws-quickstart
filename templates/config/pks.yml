@@ -7,16 +7,11 @@ product-properties:
       private_key_pem: |
 {{ (ds "data").ssl_private_key | strings.Indent 10 }}
   .properties.cloud_provider:
-    selected_option: gcp
-    value: GCP
-  .properties.cloud_provider.gcp.master_service_account:
-    value: {{ ((ds "data").pks_master_node_service_account_key | json).client_email }}
-  .properties.cloud_provider.gcp.network:
-    value: {{ (ds "data").network_name }}
-  .properties.cloud_provider.gcp.project_id:
-    value: {{ (ds "data").project }}
-  .properties.cloud_provider.gcp.worker_service_account:
-    value: {{ ((ds "data").pks_worker_node_service_account_key | json).client_email }}
+    value: AWS
+  .properties.cloud_provider.aws.iam_instance_profile_master: 
+    value: {{ (ds "data").pks_master_iam_instance_profile_name }}
+  .properties.cloud_provider.aws.iam_instance_profile_worker: 
+    value: {{ (ds "data").pks_worker_iam_instance_profile_name }}
   .properties.log_sink_resources_deploy:
     value: true
   .properties.metric_sink_resources_deploy:
@@ -92,13 +87,13 @@ product-properties:
     value: 1
 network-properties:
   network:
-    name: {{ (ds "data").pks_subnet_name }} 
+    name: pks 
   other_availability_zones:
   - name: {{ index (ds "data").azs 0 }}
   - name: {{ index (ds "data").azs 1 }}
   - name: {{ index (ds "data").azs 2 }}
   service_network: 
-    name: {{ (ds "data").pks_services_subnet_name }}
+    name: pks-services
   singleton_availability_zone:
     name: {{ index (ds "data").azs 0 }}
 resource-config:
@@ -110,7 +105,8 @@ resource-config:
         id: automatic
       internet_connected: true
       elb_names:
-      - tcp:{{ (ds "data").pks_lb_backend_name }}
+      - alb:{{ index (ds "data").pks_api_target_groups 0 }}
+      - alb:{{ index (ds "data").pks_api_target_groups 1 }}
 errand-config:
   delete-all-clusters:
     pre-delete-state: true

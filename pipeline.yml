@@ -384,7 +384,6 @@ jobs:
     params:
       ENV_FILE: ((pks.env_name))/env/env.yml
       DIRECTOR_CONFIG_FILE: ((pks.env_name))/config/director.yml
-      VARS_FILES: config/((pks.env_name))/config/director-vars.yml
   - task: apply-director-changes
     image: platform-automation-image
     file: platform-automation-tasks/tasks/apply-director-changes.yml

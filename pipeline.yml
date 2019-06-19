@@ -322,6 +322,7 @@ jobs:
     params:
       STATE_FILE: ((pks.env_name))/state/state.yml
       OPSMAN_CONFIG_FILE: ((pks.env_name))/config/opsman.yml
+      VARS_FILES: config/((pks.env_name))/config/opsman-vars.yml
     ensure: &make-state-commit
       do:
         - task: make-commit

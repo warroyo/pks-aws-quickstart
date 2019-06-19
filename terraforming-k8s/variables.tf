@@ -3,13 +3,15 @@ variable "instances" {
 }
 variable "env_name" {}
 
-variable "service_account_key" {}
-
-
-variable "project" {}
+variable "access_key" {}
+variable "secret_key" {}
 
 variable "region" {}
 variable "cluster_name" {}
 variable "network" {}
 variable "dns_zone_name" {}
 variable "dns_zone_dns_name" {}
+
+variable "public_subnet_ids" {
+  
+}

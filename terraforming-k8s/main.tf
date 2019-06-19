@@ -12,81 +12,52 @@ terraform {
 
 locals {
   lb_name = "${var.env_name}-${var.cluster_name}-api"
-  target_tags = ["${local.lb_name}", "master"]
 }
 
-resource "google_compute_http_health_check" "lb" {
-  name                = "${var.env_name}-${var.cluster_name}-health-check"
-  port                = 8443
-  request_path        = "/health"
-  check_interval_sec  = 0
-  timeout_sec         = 0
-  healthy_threshold   = 0
-  unhealthy_threshold = 0
-
-  count = 1
+resource "aws_lb" "k8s-api" {
+  name                             = "${local.lb}-api"
+  load_balancer_type               = "network"
+  enable_cross_zone_load_balancing = true
+  internal                         = false
+  subnets                          = ["${var.public_subnet_ids}"]
 }
 
-resource "google_compute_firewall" "health_check" {
-  name    = "${var.env_name}-${var.cluster_name}-health-check"
-  network = "${var.network}"
 
-  allow {
-    protocol = "tcp"
-    ports    = ["8443"]
+resource "aws_lb_listener" "k8s-api_8443" {
+  load_balancer_arn = "${aws_lb.k8s-api.arn}"
+  port              = 8443
+  protocol          = "TCP"
+
+  default_action {
+    type             = "forward"
+    target_group_arn = "${aws_lb_target_group.k8s-api_8443.arn}"
+  }
+}
+
+resource "aws_lb_target_group" "k8s-api_8443" {
+  name     = "${var.env_name}-${var.cluster_name}-tg-8443"
+  port     = 8443
+  protocol = "TCP"
+  vpc_id   = "${var.network}"
+}
+
+resource "aws_lb_target_group_attachment" "k8s-api_8443" {
+  count            = "${var.instances.count}"
+  target_group_arn = "${aws_lb_target_group.k8s-api_8443.arn}"
+  target_id        = "${var.instances[count.index]}"
+  port             = 8443
+}
+
+
+resource "aws_route53_record" "k8s-api_dns" {
+  zone_id = "${var.dns_zone_name}"
+  name    = "${var.cluster_name}.${var.dns_zone_dns_name}"
+  type    = "A"
+
+  alias {
+    name                   = "${aws_lb.k8s-api.dns_name}"
+    zone_id                = "${aws_lb.k8s-api.zone_id}"
+    evaluate_target_health = true
   }
 
-  source_ranges = ["130.211.0.0/22", "35.191.0.0/16"]
-
-  target_tags = ["${compact(local.target_tags)}"]
-
-  count = 1
-}
-
-resource "google_compute_firewall" "lb" {
-  name    = "${var.env_name}-${var.cluster_name}-firewall"
-  network = "${var.network}"
-
-  allow {
-    protocol = "tcp"
-    ports    = ["8443"]
-  }
-
-  target_tags = ["${compact(local.target_tags)}"]
-
-  count = 1
-}
-
-resource "google_compute_address" "lb" {
-  name = "${var.env_name}-${var.cluster_name}-address"
-
-  count = 1
-}
-
-resource "google_dns_record_set" "cluster-dns" {
-  name = "${var.cluster_name}.${var.dns_zone_dns_name}."
-  type = "A"
-  ttl  = 300
-
-  managed_zone = "${var.dns_zone_name}"
-
-  rrdatas = ["${google_compute_address.lb.address}"]
-}
-
-resource "google_compute_forwarding_rule" "lb" {
-  name        = "${var.env_name}-${var.cluster_name}-lb"
-  ip_address  = "${google_compute_address.lb.address}"
-  target      = "${google_compute_target_pool.lb.self_link}"
-  port_range  = "8443"
-  ip_protocol = "TCP"
-
-  count = 1
-}
-
-resource "google_compute_target_pool" "lb" {
-  name = "${var.env_name}-${var.cluster_name}-api"
-
-  health_checks = ["${google_compute_http_health_check.lb.*.name}"]
-  instances = ["${var.instances}"]
-  count = 1
 }

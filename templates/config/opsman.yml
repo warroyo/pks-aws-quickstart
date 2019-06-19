@@ -7,7 +7,6 @@ opsman-configuration:
     iam_instance_profile_name: {{ (ds "data").ops_manager_iam_instance_profile_name }}
     key_pair_name: {{ (ds "data").ops_manager_ssh_public_key_name }}
     instance_type: m5.large
-    use_instance_profile: true 
     boot_disk_size: 100
     security_group_id: {{ (ds "data").ops_manager_security_group_id }}
     # At least one IP address (public or private) needs to be assigned to the VM.

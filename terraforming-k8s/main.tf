@@ -15,7 +15,7 @@ locals {
 }
 
 resource "aws_lb" "k8s-api" {
-  name                             = "${local.lb}-api"
+  name                             = "${local.lb_name}-api"
   load_balancer_type               = "network"
   enable_cross_zone_load_balancing = true
   internal                         = false

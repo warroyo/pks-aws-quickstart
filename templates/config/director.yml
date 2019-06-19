@@ -76,7 +76,8 @@ properties-configuration:
     iam_instance_profile: {{ (ds "data").ops_manager_iam_instance_profile_name }}
     name: {{ (ds "data").region }}
     key_pair_name: {{ (ds "data").ops_manager_ssh_public_key_name }}
-    ssh_private_key: {{ (ds "data").ops_manager_ssh_private_key }}
+    ssh_private_key: |
+{{ (ds "data").ops_manager_ssh_private_key | strings.Indent 10 }}
     region: {{ (ds "data").region }}
     security_group: {{ (ds "data").vms_security_group_id }}
   security_configuration:

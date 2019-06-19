@@ -107,6 +107,8 @@ resource-config:
       elb_names:
       - alb:{{ index (ds "data").pks_api_target_groups 0 }}
       - alb:{{ index (ds "data").pks_api_target_groups 1 }}
+      additional_vm_extensions:
+      - pks-api-security-groups
 errand-config:
   delete-all-clusters:
     pre-delete-state: true

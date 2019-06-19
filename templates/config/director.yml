@@ -98,4 +98,7 @@ resource-configuration:
     instance_type:
       id: automatic
     internet_connected: true
-vmextensions-configuration: []
+vmextensions-configuration:
+- name: pks-api-security-groups
+  cloud_properties:
+    security_groups: ["pks_api_lb_security_group", "vms_security_group"]

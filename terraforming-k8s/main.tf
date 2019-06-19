@@ -44,7 +44,7 @@ resource "aws_lb_target_group" "k8s-api_8443" {
 resource "aws_lb_target_group_attachment" "k8s-api_8443" {
   count            = "${var.instances.count}"
   target_group_arn = "${aws_lb_target_group.k8s-api_8443.arn}"
-  target_id        = "${var.instances[count.index]}"
+  target_id        = "${element(var.instances, count.index)}"
   port             = 8443
 }
 

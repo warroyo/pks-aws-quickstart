@@ -37,6 +37,8 @@ run:
         mkdir -p interpolated-config/$ENV_NAME/env
         mkdir -p interpolated-config/$ENV_NAME/tf
         /bin/gomplate --input-dir config/$ENV_NAME/tf -d data=file://$(pwd)/terraform-output/metadata?type=application/json --output-dir interpolated-config/$ENV_NAME/tf --verbose
+        /bin/gomplate -i $'aws_access_key: {{env.Getenv "AWS_ACCESS_KEY" | strings.Indent 2 }}' -o interpolated-config/$ENV_NAME/config/opsman-vars.yml --verbose
+        /bin/gomplate -i $'aws_secret_key: {{env.Getenv "AWS_SECRET_KEY" | strings.Indent 2 }}' -o interpolated-config/$ENV_NAME/config/opsman-vars.yml --verbose
         /bin/gomplate --input-dir config/$ENV_NAME/config -d data=file://$(pwd)/terraform-output/metadata?type=application/json --output-dir interpolated-config/$ENV_NAME/config --verbose
         /bin/gomplate -f config/$ENV_NAME/env/env.yml -d data=file://$(pwd)/terraform-output/metadata?type=application/json -o interpolated-config/$ENV_NAME/env/env.yml --verbose
   

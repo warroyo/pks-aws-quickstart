@@ -318,7 +318,6 @@ jobs:
       state: state
       config: configuration-interpolated
     params:
-      VARS_FILES: config/((pks.env_name))/config/opsman-vars.yml
       STATE_FILE: ((pks.env_name))/state/state.yml
       OPSMAN_CONFIG_FILE: ((pks.env_name))/config/opsman.yml
     ensure: &make-state-commit

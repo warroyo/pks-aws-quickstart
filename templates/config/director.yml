@@ -64,8 +64,8 @@ properties-configuration:
     local_blobstore_options:
       tls_enabled: true
     ntp_servers_string: 0.amazon.pool.ntp.org,1.amazon.pool.ntp.org,2.amazon.pool.ntp.org,3.amazon.pool.ntp.org
-    post_deploy_enabled: false
-    resurrector_enabled: false
+    post_deploy_enabled: true
+    resurrector_enabled: true
     retry_bosh_deploys: false
     skip_director_drain: true
   dns_configuration:

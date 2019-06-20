@@ -15,3 +15,10 @@ variable "dns_zone_dns_name" {}
 variable "public_subnet_ids" {
     type = "list"
 }
+variable "zones" {
+    type = "list"
+}
+
+variable "security_groups" {
+    type = "list"
+}

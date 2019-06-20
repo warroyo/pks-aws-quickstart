@@ -108,6 +108,7 @@ resources:
       access_key: ((aws.access_key))
       secret_key: ((aws.secret_key))
       region: ((aws.region))
+      zones: ((aws.zones))
       cluster_name: ((pks.cluster_name))
       dns_zone_dns_name: ((pks.env_name)).((aws.parent_zone.dns_suffix))
 

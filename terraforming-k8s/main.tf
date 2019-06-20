@@ -35,7 +35,7 @@ resource "aws_elb" "k8s-api" {
     interval            = 30
   }
 
-  instances                   = ["${aws_instance.foo.id}"]
+  instances                   = ["${var.instances}"]
   cross_zone_load_balancing   = true
   idle_timeout                = 400
   connection_draining         = true

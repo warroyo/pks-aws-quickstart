@@ -16,7 +16,7 @@ locals {
 
 resource "aws_elb" "k8s-api" {
   name               = "${local.lb_name}"
-  availability_zones = ["${var.zones}"]
+  # availability_zones = ["${var.zones}"]
   security_groups = ["${var.security_groups}"]
   subnets = ["${var.public_subnet_ids}"]
 

@@ -26,5 +26,5 @@ resource "aws_route53_record" "name_servers" {
   type = "NS"
   ttl  = 300
 
-  records = ["${module.pks.env_dns_zone_name_servers}"]
+  records = ["${module.infra.name_servers}"]
 }

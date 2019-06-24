@@ -20,12 +20,10 @@ resources:
 # products
 
 - name: tf
-  type: pivnet
+  type: git
   source:
-    api_token: ((pivnet-api-token))
-    product_slug: elastic-runtime
-    product_version: 2.5.5
-    sort_by: semver
+    uri: https://github.com/pivotal-cf/terraforming-aws
+    branch: b5a424ae54f0c15b506c1ad77e4569659b4f8c98
 
 - name: platform-automation-tasks
   type: pivnet
@@ -57,7 +55,7 @@ resources:
   source:
     api_token: ((pivnet-api-token))
     product_slug: pivotal-container-service
-    product_version: 1.4.0
+    product_version: 1.4.1
     sort_by: semver
 
 - name: pks-stemcell
@@ -180,24 +178,6 @@ interpolate: &interpolate
       AWS_SECRET_KEY: ((aws.secret_key))
 
 
-rename-tf-source: &rename-tf-source
-  config:
-    platform: linux
-    image_resource:
-      type: docker-image
-      source:
-        repository: bash
-    inputs:
-      - name: tf
-    outputs:
-      - name: tf-source
-    run:
-      path: bash
-      args:
-      - "-c"
-      - |
-        mv tf/pivotal-cf-terraforming*/* tf-source
-
 jobs:
 
 - name: bootstrap-configuration
@@ -278,14 +258,12 @@ jobs:
       unpack: true
   - get: pcf-automation-source
     passed: [bootstrap-configuration]
-  - task: rename-folder
-    <<: *rename-tf-source
   - put: env-state-aws
     params:
       # env:
       #   TF_LOG: debug
       env_name: ((pks.env_name))
-      terraform_source: tf-source/terraforming-pks
+      terraform_source: tf/terraforming-pks
       override_files:
         - configuration/((pks.env_name))/terraform_override_files/dns_override.tf
         - configuration/((pks.env_name))/terraform_override_files/acme_override.tf
@@ -571,12 +549,10 @@ jobs:
         unpack: true
   - get: pcf-automation-source
   - get: state
-  - task: rename-folder
-    <<: *rename-tf-source
   - put: env-state-aws
     params:
       env_name: ((pks.env_name))
-      terraform_source: tf-source/terraforming-pks
+      terraform_source: tf/terraforming-pks
       override_files:
         - configuration/((pks.env_name))/terraform_override_files/dns_override.tf
         - configuration/((pks.env_name))/terraform_override_files/acme_override.tf

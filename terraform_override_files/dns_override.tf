@@ -11,20 +11,3 @@ resource "aws_route53_record" "nameserver" {
 
   records = ["${module.infra.name_servers}"]
 }
-
-# data "aws_route53_zone" "pcf_zone" {
-
-#   name = "${var.env_name}.${var.dns_suffix}."
-# }
-
-#overriding the infra/dns module since in 0.37 it is broken and adds the NS record as a list.
-resource "aws_route53_record" "name_servers" {
-  count = 1
-  zone_id = "${module.infra.zone_id}"
-  name    = "${var.env_name}.${var.dns_suffix}"
-
-  type = "NS"
-  ttl  = 300
-
-  records = ["${module.infra.name_servers}"]
-}

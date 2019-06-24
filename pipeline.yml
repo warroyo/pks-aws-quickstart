@@ -23,7 +23,7 @@ resources:
   type: git
   source:
     uri: https://github.com/pivotal-cf/terraforming-aws
-    branch: b5a424ae54f0c15b506c1ad77e4569659b4f8c98
+    branch: master
 
 - name: platform-automation-tasks
   type: pivnet

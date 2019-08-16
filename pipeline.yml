@@ -118,7 +118,7 @@ resources:
   type: git
   source:
     uri: ((github.repos.pcf-automation-source.uri))
-    branch: v1.0.0
+    branch: v1.0.1
 
 - name: configuration
   type: git

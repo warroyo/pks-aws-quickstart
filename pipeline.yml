@@ -394,7 +394,7 @@ jobs:
     - get: pks-stemcell
       params:
         globs:
-        - light-bosh-stemcell-*-google-*.tgz
+        - light-bosh-stemcell-*-aws-*.tgz
     - get: configuration
       trigger: true
       passed: [ install-opsman ]

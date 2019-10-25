@@ -100,6 +100,8 @@ product-properties:
     value: disabled
   .properties.telemetry_selector:
     value: disabled
+  .properties.telemetry_installation_purpose_selector:
+    value: not_provided
   .properties.uaa:
     value: internal
   .properties.oidc_selector:

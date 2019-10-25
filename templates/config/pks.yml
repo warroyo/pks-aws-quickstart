@@ -72,8 +72,14 @@ product-properties:
     value: disabled
   .properties.uaa:
     value: internal
-  .properties.uaa_oidc:
-    value: false
+  .properties.oidc_selector.enabled.groups_claim:
+    value: roles
+  .properties.oidc_selector.enabled.groups_prefix:
+    value: 'oidc:'
+  .properties.oidc_selector.enabled.username_claim:
+    value: user_name
+  .properties.oidc_selector.enabled.username_prefix:
+    value: 'oidc:'
   .properties.uaa_pks_cli_access_token_lifetime:
     value: 600
   .properties.uaa_pks_cli_refresh_token_lifetime:

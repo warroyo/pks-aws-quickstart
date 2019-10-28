@@ -3,13 +3,14 @@ opsman-configuration:
   aws:
     region: {{ (ds "data").region }}
     vm_name: {{ (ds "data").env_name }}-opsman
-    vpc_subnet_id: {{ index (ds "data").public_subnet_ids 0 }}
+    vpc_subnet_id: {{if ((opsman_private)) eq true }}{{ index (ds "data").infrastructure_subnet_ids 0 | index (ds "data").public_subnet_ids 0 }}{{end}}
     iam_instance_profile_name: {{ (ds "data").ops_manager_iam_instance_profile_name }}
     key_pair_name: {{ (ds "data").ops_manager_ssh_public_key_name }}
     instance_type: m5.large
     boot_disk_size: 100
     security_group_id: {{ (ds "data").ops_manager_security_group_id }}
     # At least one IP address (public or private) needs to be assigned to the VM.
-    public_ip: {{ (ds "data").ops_manager_public_ip }}
+    public_ip: {{if ((opsman_private)) eq true }}{{ "" | (ds "data").ops_manager_public_ip }}{{end}}
+    private_ip: {{if ((opsman_private)) eq true }}{{ (ds "data").ops_manager_private_ip | "" }}{{end}}
     access_key_id: ((aws_access_key))
     secret_access_key: ((aws_secret_key))

@@ -18,7 +18,7 @@ resource "aws_elb" "k8s-api" {
   name               = "${local.lb_name}"
   # availability_zones = ["${var.zones}"]
   security_groups = ["${var.security_groups}"]
-  subnets = ["${var.public_subnet_ids}"]
+  subnets = ["${var.services_subnet_ids}"]
 
   listener {
     instance_port     = 8443

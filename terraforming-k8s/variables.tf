@@ -12,7 +12,7 @@ variable "network" {}
 variable "dns_zone_name" {}
 variable "dns_zone_dns_name" {}
 
-variable "public_subnet_ids" {
+variable "services_subnet_ids" {
     type = "list"
 }
 variable "zones" {

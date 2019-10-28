@@ -22,7 +22,7 @@ resources:
 - name: tf
   type: git
   source:
-    uri: https://github.com/pivotal-cf/terraforming-aws
+    uri: ((github.repos.terraform.uri))
     branch: master
 
 - name: platform-automation-tasks
@@ -87,6 +87,8 @@ resources:
       tags:
       - Env: ((pks.env_name))
       ops_manager_ami: ""
+      ops_manager_private: ((opsman.private))
+      vpc_id: ((aws.vpc_id))
       vpc_cidr: ((aws.vpc_cidr))
       parent_managed_zone: ((aws.parent_zone.name))
       email: ((email))
@@ -118,7 +120,7 @@ resources:
   type: git
   source:
     uri: ((github.repos.pcf-automation-source.uri))
-    branch: v1.1.0
+    branch: private-vpc
 
 - name: configuration
   type: git
@@ -176,6 +178,7 @@ interpolate: &interpolate
       OM_DECRYPTION_PASSPHRASE: ((opsman.decryption-passphrase))
       AWS_ACCESS_KEY: ((aws.access_key))
       AWS_SECRET_KEY: ((aws.secret_key))
+      OPSMAN_PRIVATE: ((opsman.private))
 
 
 jobs:

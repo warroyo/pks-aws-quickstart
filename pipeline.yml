@@ -4,7 +4,7 @@ resource_types:
   type: docker-image
   source:
     repository: ljfranklin/terraform-resource
-    tag: 0.11.13
+    tag: 0.11.14
 - name: pivnet
   type: docker-image
   source:
@@ -268,10 +268,8 @@ jobs:
       env_name: ((pks.env_name))
       terraform_source: tf/terraforming-pks
       override_files:
-        - configuration/((pks.env_name))/terraform_override_files/dns_override.tf
-        - configuration/((pks.env_name))/terraform_override_files/acme_override.tf
         - configuration/((pks.env_name))/terraform_override_files/output_override.tf
-      delete_on_failure: false
+      delete_on_failure: true
 
 # INSTALL JOBS
 - name: install-opsman

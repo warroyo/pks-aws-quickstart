@@ -22,6 +22,9 @@ output "subnet_pks_svc_reserved" {
   ]
 }
 
+output "ops_manager_private_ip" {
+  value = "${cidrhost(module.infra.infrastructure_subnet_cidrs[0], 6)}"
+}
 output "dns" {
   value = "${cidrhost(var.vpc_cidr, 2)}"
 }
